@@ -51,6 +51,7 @@ func (l *notelist) remove(n *note) {
 }
 
 func (l *notelist) load() {
+	l.notes = nil
 	count := l.pref.Int(countKey)
 	for i := 0; i < count; i++ {
 		key := fmt.Sprintf(noteKey, i)
