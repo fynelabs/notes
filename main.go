@@ -8,12 +8,28 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-var current *note
+var (
+	content *widget.Entry
+	current *note
+)
+
+func setNote(n *note) {
+	current = n
+	if n == nil {
+		content.SetText("")
+		return
+	}
+
+	content.SetText(n.content)
+}
 
 func loadUI(notes []*note) fyne.CanvasObject {
 	list := widget.NewVBox()
 	for _, n := range notes {
-		list.Append(widget.NewLabel(n.title()))
+		theNote := n
+		list.Append(widget.NewButton(n.title(), func() {
+			setNote(theNote)
+		}))
 	}
 
 	toolbar := widget.NewToolbar(
@@ -22,9 +38,9 @@ func loadUI(notes []*note) fyne.CanvasObject {
 		widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {
 		}))
 
-	content := widget.NewMultiLineEntry()
+	content = widget.NewMultiLineEntry()
 	if len(notes) > 0 {
-		content.SetText(notes[0].content)
+		setNote(notes[0])
 	}
 
 	side := fyne.NewContainerWithLayout(layout.NewBorderLayout(toolbar, nil, nil, nil), toolbar, list)
