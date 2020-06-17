@@ -10,6 +10,7 @@ import (
 
 var (
 	content *widget.Entry
+	list *widget.Box
 	current *note
 )
 
@@ -23,24 +24,37 @@ func setNote(n *note) {
 	content.SetText(n.content)
 }
 
-func loadUI(notes []*note) fyne.CanvasObject {
-	list := widget.NewVBox()
-	for _, n := range notes {
+func refreshList(n *notelist) {
+	list.Children = nil
+	for _, n := range n.notes {
 		theNote := n
 		list.Append(widget.NewButton(n.title(), func() {
 			setNote(theNote)
 		}))
 	}
+}
+
+func loadUI(n *notelist) fyne.CanvasObject {
+	list = widget.NewVBox()
+	refreshList(n)
 
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
+			setNote(n.add())
+			refreshList(n)
 		}),
 		widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {
+			n.remove(current)
+			refreshList(n)
+			if len(n.notes) == 0 {
+				setNote(nil)
+			}
+			setNote(n.notes[0])
 		}))
 
 	content = widget.NewMultiLineEntry()
-	if len(notes) > 0 {
-		setNote(notes[0])
+	if len(n.notes) > 0 {
+		setNote(n.notes[0])
 	}
 
 	side := fyne.NewContainerWithLayout(layout.NewBorderLayout(toolbar, nil, nil, nil), toolbar, list)
@@ -53,10 +67,10 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("Notes")
 
-	notes := []*note{
+	notes := &notelist{[]*note{
 		&note{"Note 1\nHas some content"},
 		&note{"Note 2\nIs another note"},
-	}
+	}}
 
 	w.SetContent(loadUI(notes))
 	w.Resize(fyne.NewSize(300, 200))
