@@ -25,13 +25,20 @@ func setNote(n *note) {
 }
 
 func refreshList(n *notelist) {
-	list.Children = nil
+	var items []fyne.CanvasObject
 	for _, n := range n.notes {
 		theNote := n
-		list.Append(widget.NewButton(n.title(), func() {
+		b := widget.NewButton(n.title(), func() {
 			setNote(theNote)
-		}))
+		})
+
+		if theNote == current {
+			b.Style = widget.PrimaryButton
+		}
+		items = append(items, b)
 	}
+	list.Children = items
+	list.Refresh()
 }
 
 func loadUI(n *notelist) fyne.CanvasObject {
