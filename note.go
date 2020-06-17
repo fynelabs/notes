@@ -1,6 +1,16 @@
 package main
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+
+	"fyne.io/fyne"
+)
+
+const (
+	countKey = "notecount"
+	noteKey = "note%d"
+)
 
 type note struct {
 	content string
@@ -16,15 +26,18 @@ func (n *note) title() string {
 
 type notelist struct {
 	notes []*note
+	pref fyne.Preferences
 }
 
 func (l *notelist) add() *note {
 	n := &note{}
 	l.notes = append([]*note{n}, l.notes...)
+	l.save()
 	return n
 }
 
 func (l *notelist) remove(n *note) {
+	defer l.save()
 	for i, note := range l.notes {
 		if n == note {
 			if i == len(l.notes) - 1 {
@@ -35,4 +48,21 @@ func (l *notelist) remove(n *note) {
 			return
 		}
 	}
+}
+
+func (l *notelist) load() {
+	count := l.pref.Int(countKey)
+	for i := 0; i < count; i++ {
+		key := fmt.Sprintf(noteKey, i)
+		content := l.pref.String(key)
+		l.notes = append(l.notes, &note{content})
+	}
+}
+
+func (l *notelist) save() {
+	for i, note := range l.notes {
+		key := fmt.Sprintf(noteKey, i)
+		l.pref.SetString(key, note.content)
+	}
+	l.pref.SetInt(countKey, len(l.notes))
 }

@@ -62,6 +62,7 @@ func loadUI(n *notelist) fyne.CanvasObject {
 		}
 
 		current.content = text
+		n.save()
 		refreshList(n)
 	}
 
@@ -72,13 +73,11 @@ func loadUI(n *notelist) fyne.CanvasObject {
 }
 
 func main() {
-	a := app.New()
+	a := app.NewWithID("xyz.andy.notes")
 	w := a.NewWindow("Notes")
 
-	notes := &notelist{[]*note{
-		&note{"Note 1\nHas some content"},
-		&note{"Note 2\nIs another note"},
-	}}
+	notes := &notelist{pref: a.Preferences()}
+	notes.load()
 
 	w.SetContent(loadUI(notes))
 	w.Resize(fyne.NewSize(300, 200))
