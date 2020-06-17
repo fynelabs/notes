@@ -56,6 +56,14 @@ func loadUI(n *notelist) fyne.CanvasObject {
 	if len(n.notes) > 0 {
 		setNote(n.notes[0])
 	}
+	content.OnChanged = func(text string) {
+		if current == nil {
+			return
+		}
+
+		current.content = text
+		refreshList(n)
+	}
 
 	side := fyne.NewContainerWithLayout(layout.NewBorderLayout(toolbar, nil, nil, nil), toolbar, list)
 	split := widget.NewHSplitContainer(side, content)
