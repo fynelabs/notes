@@ -8,10 +8,13 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-func loadUI() fyne.CanvasObject {
-	list := widget.NewVBox(
-		widget.NewLabel("Item 1"),
-		widget.NewLabel("Item 2"))
+var current *note
+
+func loadUI(notes []*note) fyne.CanvasObject {
+	list := widget.NewVBox()
+	for _, n := range notes {
+		list.Append(widget.NewLabel(n.title()))
+	}
 
 	toolbar := widget.NewToolbar(
 		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
@@ -20,7 +23,9 @@ func loadUI() fyne.CanvasObject {
 		}))
 
 	content := widget.NewMultiLineEntry()
-	content.SetText("Note content")
+	if len(notes) > 0 {
+		content.SetText(notes[0].content)
+	}
 
 	side := fyne.NewContainerWithLayout(layout.NewBorderLayout(toolbar, nil, nil, nil), toolbar, list)
 	split := widget.NewHSplitContainer(side, content)
@@ -32,7 +37,12 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("Notes")
 
-	w.SetContent(loadUI())
+	notes := []*note{
+		&note{"Note 1\nHas some content"},
+		&note{"Note 2\nIs another note"},
+	}
+
+	w.SetContent(loadUI(notes))
 	w.Resize(fyne.NewSize(300, 200))
 	w.ShowAndRun()
 }
