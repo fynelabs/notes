@@ -38,21 +38,31 @@ func (l *notelist) add() *note {
 
 func (l *notelist) remove(n *note) {
 	defer l.save()
+	if len(l.notes) == 0 {
+		return
+	}
+
 	for i, note := range l.notes {
-		if n == note {
-			if i == len(l.notes) - 1 {
-				l.notes = l.notes[:i]
-				return
-			}
-			l.notes = append(l.notes[:i], l.notes[i+1:]...)
-			return
+		if note != n {
+			continue
 		}
+
+		if i == len(l.notes)-1 {
+			l.notes = l.notes[:i]
+		} else {
+			l.notes = append(l.notes[:i], l.notes[i+1:]...)
+		}
+		break
 	}
 }
 
 func (l *notelist) load() {
 	l.notes = nil
 	count := l.pref.Int(countKey)
+	if count == 0 {
+		return // TODO write a tutorial note? :)
+	}
+
 	for i := 0; i < count; i++ {
 		key := fmt.Sprintf(noteKey, i)
 		content := l.pref.String(key)
