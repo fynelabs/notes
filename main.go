@@ -22,6 +22,10 @@ func (u *ui) addNote() {
 }
 
 func (u *ui) setNote(n *note) {
+	if n == nil {
+		u.content.SetText("")
+		return
+	}
 	u.current = n
 	u.content.SetText(n.content)
 	u.refreshList()
@@ -49,6 +53,8 @@ func (u *ui) removeCurrentNote() {
 	u.notes.remove(u.current)
 	if len(u.notes.notes) > 0 {
 		u.setNote(u.notes.notes[0])
+	} else {
+		u.setNote(nil)
 	}
 	u.refreshList()
 }
