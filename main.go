@@ -8,73 +8,83 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-var (
-	content *widget.Entry
-	list *widget.Box
+type ui struct {
 	current *note
-)
+	notes   *notelist
 
-func setNote(n *note) {
-	current = n
-	if n == nil {
-		content.SetText("")
-		return
-	}
-
-	content.SetText(n.content)
+	content *widget.Entry
+	list    *widget.Box
 }
 
-func refreshList(n *notelist) {
-	var items []fyne.CanvasObject
-	for _, n := range n.notes {
-		theNote := n
-		b := widget.NewButton(n.title(), func() {
-			setNote(theNote)
+func (u *ui) addNote() {
+	newNote := u.notes.add()
+	u.setNote(newNote)
+}
+
+func (u *ui) setNote(n *note) {
+	u.current = n
+	u.content.SetText(n.content)
+	u.refreshList()
+}
+
+func (u *ui) refreshList() {
+	var list []fyne.CanvasObject
+	for _, n := range u.notes.notes {
+		thisNote := n
+		button := widget.NewButton(n.title(), func() {
+			u.setNote(thisNote)
 		})
-
-		if theNote == current {
-			b.Style = widget.PrimaryButton
+		if n == u.current {
+			button.Style = widget.PrimaryButton
 		}
-		items = append(items, b)
+
+		list = append(list, button)
 	}
-	list.Children = items
-	list.Refresh()
+
+	u.list.Children = list
+	u.list.Refresh()
 }
 
-func loadUI(n *notelist) fyne.CanvasObject {
-	list = widget.NewVBox()
-	refreshList(n)
-
-	toolbar := widget.NewToolbar(
-		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
-			setNote(n.add())
-			refreshList(n)
-		}),
-		widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {
-			n.remove(current)
-			refreshList(n)
-			if len(n.notes) == 0 {
-				setNote(nil)
-			}
-			setNote(n.notes[0])
-		}))
-
-	content = widget.NewMultiLineEntry()
-	if len(n.notes) > 0 {
-		setNote(n.notes[0])
+func (u *ui) removeCurrentNote() {
+	u.notes.remove(u.current)
+	if len(u.notes.notes) > 0 {
+		u.setNote(u.notes.notes[0])
 	}
-	content.OnChanged = func(text string) {
-		if current == nil {
+	u.refreshList()
+}
+
+func (u *ui) loadUI() fyne.CanvasObject {
+	u.content = widget.NewMultiLineEntry()
+
+	u.list = widget.NewVBox()
+	u.refreshList()
+
+	if len(u.notes.notes) > 0 {
+		u.setNote(u.notes.notes[0])
+	}
+	u.content.OnChanged = func(content string) {
+		if u.current == nil {
 			return
 		}
 
-		current.content = text
-		n.save()
-		refreshList(n)
+		u.current.content = content
+		u.notes.save()
+		u.refreshList()
 	}
 
-	side := fyne.NewContainerWithLayout(layout.NewBorderLayout(toolbar, nil, nil, nil), toolbar, list)
-	split := widget.NewHSplitContainer(side, content)
+	bar := widget.NewToolbar(
+		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
+			u.addNote()
+		}),
+		widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {
+			u.removeCurrentNote()
+		}),
+	)
+
+	side := fyne.NewContainerWithLayout(layout.NewBorderLayout(bar, nil, nil, nil),
+		bar, u.list)
+
+	split := widget.NewHSplitContainer(side, u.content)
 	split.Offset = 0.25
 	return split
 }
@@ -83,10 +93,11 @@ func main() {
 	a := app.NewWithID("xyz.andy.notes")
 	w := a.NewWindow("Notes")
 
-	notes := &notelist{pref: a.Preferences()}
-	notes.load()
+	list := &notelist{pref: a.Preferences()}
+	list.load()
+	notesUI := &ui{notes: list}
 
-	w.SetContent(loadUI(notes))
+	w.SetContent(notesUI.loadUI())
 	w.Resize(fyne.NewSize(300, 200))
 	w.ShowAndRun()
 }
