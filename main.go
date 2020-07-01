@@ -1,8 +1,12 @@
 package main
 
 import (
+	"fmt"
+	"runtime"
+
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
+	"fyne.io/fyne/driver/desktop"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
@@ -96,8 +100,26 @@ func (u *ui) loadUI() fyne.CanvasObject {
 	return split
 }
 
+func (u *ui) registerKeys(w fyne.Window) {
+	shortcut := &desktop.CustomShortcut{KeyName: fyne.KeyN, Modifier: desktop.ControlModifier}
+	if runtime.GOOS == "darwin" {
+		shortcut.Modifier = desktop.SuperModifier
+	}
+
+	w.Canvas().AddShortcut(shortcut, func(_ fyne.Shortcut) {
+		u.addNote()
+	})
+}
+
 func (u *ui) placeholderContent() string {
 	text := "Welcome!\nTap '+' in the toolbar to add a note."
+	if fyne.CurrentDevice().HasKeyboard() {
+		modifier := "ctrl"
+		if runtime.GOOS == "darwin" {
+			modifier = "cmd"
+		}
+		text += fmt.Sprintf("\n\nOr use they keyboard shortcut %s+N.", modifier)
+	}
 	return text
 }
 
@@ -110,6 +132,8 @@ func main() {
 	notesUI := &ui{notes: list}
 
 	w.SetContent(notesUI.loadUI())
+	notesUI.registerKeys(w)
+
 	w.Resize(fyne.NewSize(300, 200))
 	w.ShowAndRun()
 }
