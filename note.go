@@ -60,7 +60,7 @@ func (l *notelist) load() {
 	l.notes = nil
 	count := l.pref.Int(countKey)
 	if count == 0 {
-		return // TODO write a tutorial note? :)
+		return
 	}
 
 	for i := 0; i < count; i++ {

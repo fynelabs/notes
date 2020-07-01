@@ -23,7 +23,7 @@ func (u *ui) addNote() {
 
 func (u *ui) setNote(n *note) {
 	if n == nil {
-		u.content.SetText("")
+		u.content.SetText(u.placeholderContent())
 		return
 	}
 	u.current = n
@@ -61,6 +61,7 @@ func (u *ui) removeCurrentNote() {
 
 func (u *ui) loadUI() fyne.CanvasObject {
 	u.content = widget.NewMultiLineEntry()
+	u.content.SetText(u.placeholderContent())
 
 	u.list = widget.NewVBox()
 	u.refreshList()
@@ -93,6 +94,11 @@ func (u *ui) loadUI() fyne.CanvasObject {
 	split := widget.NewHSplitContainer(side, u.content)
 	split.Offset = 0.25
 	return split
+}
+
+func (u *ui) placeholderContent() string {
+	text := "Welcome!\nTap '+' in the toolbar to add a note."
+	return text
 }
 
 func main() {
