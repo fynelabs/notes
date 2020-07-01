@@ -9,7 +9,7 @@ import (
 
 const (
 	countKey = "notecount"
-	noteKey = "note%d"
+	noteKey  = "note%d"
 )
 
 type note struct {
@@ -26,7 +26,7 @@ func (n *note) title() string {
 
 type notelist struct {
 	notes []*note
-	pref fyne.Preferences
+	pref  fyne.Preferences
 }
 
 func (l *notelist) add() *note {
