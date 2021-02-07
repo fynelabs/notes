@@ -95,9 +95,7 @@ func (u *ui) loadUI() fyne.CanvasObject {
 	side := fyne.NewContainerWithLayout(layout.NewBorderLayout(bar, nil, nil, nil),
 		bar, widget.NewVScrollContainer(u.list))
 
-	split := newAdaptiveSplit(side, u.content)
-	split.Offset = 0.25
-	return split
+	return newAdaptiveSplit(side, u.content)
 }
 
 func (u *ui) registerKeys(w fyne.Window) {
