@@ -5,21 +5,10 @@ import (
 	"fyne.io/fyne/v2/container"
 )
 
-type adaptiveSplit struct {
-	container.Split
-}
-
-func (a *adaptiveSplit) Resize(s fyne.Size) {
-	dev := fyne.CurrentDevice()
-
-	a.Horizontal = !dev.IsMobile() || fyne.IsHorizontal(dev.Orientation())
-	a.Split.Resize(s)
-}
-
 func newAdaptiveSplit(left, right fyne.CanvasObject) *fyne.Container {
 	split := container.NewHSplit(left, right)
 	split.Offset = 0.25
-	return fyne.NewContainerWithLayout(&adaptiveLayout{split: split}, split)
+	return container.New(&adaptiveLayout{split: split}, split)
 }
 
 type adaptiveLayout struct {
