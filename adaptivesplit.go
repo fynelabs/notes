@@ -1,20 +1,19 @@
 package main
 
 import (
-	"fyne.io/fyne"
-	"fyne.io/fyne/container"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
 )
 
 type adaptiveSplit struct {
-	widget.SplitContainer
+	container.Split
 }
 
 func (a *adaptiveSplit) Resize(s fyne.Size) {
 	dev := fyne.CurrentDevice()
 
 	a.Horizontal = !dev.IsMobile() || fyne.IsHorizontal(dev.Orientation())
-	a.SplitContainer.Resize(s)
+	a.Split.Resize(s)
 }
 
 func newAdaptiveSplit(left, right fyne.CanvasObject) *fyne.Container {

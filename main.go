@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"runtime"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/app"
-	"fyne.io/fyne/driver/desktop"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/driver/desktop"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 )
 
 type ui struct {
@@ -17,7 +18,7 @@ type ui struct {
 	notes   *notelist
 
 	content *widget.Entry
-	list    *widget.Box
+	list    *fyne.Container
 }
 
 func (u *ui) addNote() {
@@ -43,13 +44,13 @@ func (u *ui) refreshList() {
 			u.setNote(thisNote)
 		})
 		if n == u.current {
-			button.Style = widget.PrimaryButton
+			button.Importance = widget.HighImportance
 		}
 
 		list = append(list, button)
 	}
 
-	u.list.Children = list
+	u.list.Objects = list
 	u.list.Refresh()
 }
 
@@ -67,7 +68,7 @@ func (u *ui) loadUI() fyne.CanvasObject {
 	u.content = widget.NewMultiLineEntry()
 	u.content.SetText(u.placeholderContent())
 
-	u.list = widget.NewVBox()
+	u.list = container.NewVBox()
 	u.refreshList()
 
 	if len(u.notes.notes) > 0 {
@@ -93,7 +94,7 @@ func (u *ui) loadUI() fyne.CanvasObject {
 	)
 
 	side := fyne.NewContainerWithLayout(layout.NewBorderLayout(bar, nil, nil, nil),
-		bar, widget.NewVScrollContainer(u.list))
+		bar, container.NewVScroll(u.list))
 
 	return newAdaptiveSplit(side, u.content)
 }
