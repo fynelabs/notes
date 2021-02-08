@@ -1,10 +1,12 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/data/binding"
 )
 
 const (
@@ -13,15 +15,11 @@ const (
 )
 
 type note struct {
-	content string
+	content binding.String
 }
 
-func (n *note) title() string {
-	if n.content == "" {
-		return "Untitled"
-	}
-
-	return strings.SplitN(n.content, "\n", 2)[0]
+func (n *note) title() binding.String {
+	return newTitleString(n.content)
 }
 
 type notelist struct {
@@ -30,7 +28,8 @@ type notelist struct {
 }
 
 func (l *notelist) add() *note {
-	n := &note{}
+	key := fmt.Sprintf(noteKey, len(l.notes))
+	n := &note{binding.BindPreferenceString(key, l.pref)}
 	l.notes = append([]*note{n}, l.notes...)
 	l.save()
 	return n
@@ -63,17 +62,38 @@ func (l *notelist) load() {
 		return
 	}
 
-	for i := 0; i < count; i++ {
+	for i := count - 1; i >= 0; i-- {
 		key := fmt.Sprintf(noteKey, i)
-		content := l.pref.String(key)
+		content := binding.BindPreferenceString(key, l.pref)
 		l.notes = append(l.notes, &note{content})
 	}
 }
 
 func (l *notelist) save() {
-	for i, note := range l.notes {
-		key := fmt.Sprintf(noteKey, i)
-		l.pref.SetString(key, note.content)
-	}
 	l.pref.SetInt(countKey, len(l.notes))
+}
+
+type titleString struct {
+	binding.String
+}
+
+func (t *titleString) Get() (string, error) {
+	content, err := t.String.Get()
+	if err != nil {
+		return "Error", err
+	}
+
+	if content == "" {
+		return "Untitled", nil
+	}
+
+	return strings.SplitN(content, "\n", 2)[0], nil
+}
+
+func (t *titleString) Set(string) error {
+	return errors.New("cannot set content from title")
+}
+
+func newTitleString(in binding.String) binding.String {
+	return &titleString{in}
 }

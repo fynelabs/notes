@@ -7,6 +7,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
@@ -27,12 +28,13 @@ func (u *ui) addNote() {
 }
 
 func (u *ui) setNote(n *note) {
+	u.content.Unbind()
 	if n == nil {
 		u.content.SetText(u.placeholderContent())
 		return
 	}
 	u.current = n
-	u.content.SetText(n.content)
+	u.content.Bind(n.content)
 	u.refreshList()
 }
 
@@ -40,9 +42,16 @@ func (u *ui) refreshList() {
 	var list []fyne.CanvasObject
 	for _, n := range u.notes.notes {
 		thisNote := n
-		button := widget.NewButton(n.title(), func() {
+		button := widget.NewButton("", func() {
 			u.setNote(thisNote)
 		})
+
+		boundTitle := n.title()
+		boundTitle.AddListener(binding.NewDataListener(func() {
+			title, _ := boundTitle.Get()
+			button.SetText(title)
+		}))
+
 		if n == u.current {
 			button.Importance = widget.HighImportance
 		}
@@ -73,15 +82,6 @@ func (u *ui) loadUI() fyne.CanvasObject {
 
 	if len(u.notes.notes) > 0 {
 		u.setNote(u.notes.notes[0])
-	}
-	u.content.OnChanged = func(content string) {
-		if u.current == nil {
-			return
-		}
-
-		u.current.content = content
-		u.notes.save()
-		u.refreshList()
 	}
 
 	bar := widget.NewToolbar(

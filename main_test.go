@@ -5,15 +5,18 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/test"
 	"fyne.io/fyne/v2/widget"
 )
 
 func testGUI() *ui {
+	str1 := "1"
+	str2 := "2"
 	l := &notelist{pref: test.NewApp().Preferences(),
 		notes: []*note{
-			&note{content: "1"},
-			&note{content: "2"},
+			{content: binding.BindString(&str1)},
+			{content: binding.BindString(&str2)},
 		}}
 
 	gui := &ui{notes: l}
