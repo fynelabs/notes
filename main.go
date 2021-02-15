@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	"runtime"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
@@ -19,7 +19,7 @@ type ui struct {
 	notes   *notelist
 
 	content *widget.Entry
-	list    *fyne.Container
+	list    *widget.List
 }
 
 func (u *ui) addNote() {
@@ -35,32 +35,29 @@ func (u *ui) setNote(n *note) {
 	}
 	u.current = n
 	u.content.Bind(n.content)
-	u.refreshList()
+	u.list.Refresh()
 }
 
-func (u *ui) refreshList() {
-	var list []fyne.CanvasObject
-	for _, n := range u.notes.notes {
-		thisNote := n
-		button := widget.NewButton("", func() {
-			u.setNote(thisNote)
+func (u *ui) buildList() *widget.List {
+	l := widget.NewList(
+		func() int {
+			return len(u.notes.notes)
+		},
+		func() fyne.CanvasObject {
+			return widget.NewLabel("Title")
+		},
+		func(id widget.ListItemID, obj fyne.CanvasObject) {
+			l := obj.(*widget.Label)
+			n := u.notes.notes[id]
+			l.Bind(n.title())
 		})
 
-		boundTitle := n.title()
-		boundTitle.AddListener(binding.NewDataListener(func() {
-			title, _ := boundTitle.Get()
-			button.SetText(title)
-		}))
-
-		if n == u.current {
-			button.Importance = widget.HighImportance
-		}
-
-		list = append(list, button)
+	l.OnSelected = func(id widget.ListItemID) {
+		n := u.notes.notes[id]
+		u.setNote(n)
 	}
 
-	u.list.Objects = list
-	u.list.Refresh()
+	return l
 }
 
 func (u *ui) removeCurrentNote() {
@@ -70,18 +67,21 @@ func (u *ui) removeCurrentNote() {
 	} else {
 		u.setNote(nil)
 	}
-	u.refreshList()
+	u.list.Refresh()
 }
 
 func (u *ui) loadUI() fyne.CanvasObject {
 	u.content = widget.NewMultiLineEntry()
 	u.content.SetText(u.placeholderContent())
 
-	u.list = container.NewVBox()
-	u.refreshList()
+	u.list = u.buildList()
 
 	if len(u.notes.notes) > 0 {
 		u.setNote(u.notes.notes[0])
+		go func() {
+			time.Sleep(time.Millisecond * 100)
+			u.list.Select(0)
+		}()
 	}
 
 	bar := widget.NewToolbar(

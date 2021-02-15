@@ -2,12 +2,12 @@ package main
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/test"
-	"fyne.io/fyne/v2/widget"
 )
 
 func testGUI() *ui {
@@ -27,7 +27,7 @@ func testGUI() *ui {
 func TestUIList(t *testing.T) {
 	gui := testGUI()
 
-	assert.Equal(t, 2, len(gui.list.Objects))
+	assert.Equal(t, 2, gui.list.Length())
 }
 
 func TestUIList_TapSetsContent(t *testing.T) {
@@ -35,7 +35,8 @@ func TestUIList_TapSetsContent(t *testing.T) {
 
 	assert.Equal(t, "1", gui.content.Text)
 
-	test.Tap(gui.list.Objects[1].(*widget.Button))
+	gui.list.Select(1) // this happens on a goroutine
+	time.Sleep(time.Millisecond * 100)
 	assert.Equal(t, "2", gui.content.Text)
 }
 
@@ -43,12 +44,12 @@ func TestUIAdd(t *testing.T) {
 	gui := testGUI()
 	gui.addNote()
 
-	assert.Equal(t, 3, len(gui.list.Objects))
+	assert.Equal(t, 3, gui.list.Length())
 }
 
 func TestUIRemove(t *testing.T) {
 	gui := testGUI()
 	gui.removeCurrentNote()
 
-	assert.Equal(t, 1, len(gui.list.Objects))
+	assert.Equal(t, 1, gui.list.Length())
 }
