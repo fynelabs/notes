@@ -7,7 +7,7 @@ import (
 
 func newAdaptiveSplit(left, right fyne.CanvasObject) *fyne.Container {
 	split := container.NewHSplit(left, right)
-	split.Offset = 0.25
+	split.Offset = 0.33
 	return container.New(&adaptiveLayout{split: split}, split)
 }
 

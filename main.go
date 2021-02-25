@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"runtime"
-	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -78,10 +77,7 @@ func (u *ui) loadUI() fyne.CanvasObject {
 
 	if len(u.notes.notes) > 0 {
 		u.setNote(u.notes.notes[0])
-		go func() {
-			time.Sleep(time.Millisecond * 100)
-			u.list.Select(0)
-		}()
+		u.list.Select(0)
 	}
 
 	bar := widget.NewToolbar(
@@ -134,6 +130,6 @@ func main() {
 	w.SetContent(notesUI.loadUI())
 	notesUI.registerKeys(w)
 
-	w.Resize(fyne.NewSize(300, 200))
+	w.Resize(fyne.NewSize(400, 320))
 	w.ShowAndRun()
 }
