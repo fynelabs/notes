@@ -12,5 +12,5 @@ All data is stored in your preference storage (which is platform dependent).
 If you have developer tools installed already then you can just use go get to install:
 
 ```bash
-go get github.com/andydotxyz/notes/
+go get github.com/fynelabs/notes/
 ```

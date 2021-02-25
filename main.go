@@ -119,7 +119,7 @@ func (u *ui) placeholderContent() string {
 }
 
 func main() {
-	a := app.NewWithID("xyz.andy.notes")
+	a := app.NewWithID("com.fynelabs.notes")
 	a.Settings().SetTheme(&myTheme{})
 	w := a.NewWindow("Notes")
 

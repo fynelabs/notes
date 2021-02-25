@@ -1,4 +1,4 @@
-module github.com/andydotxyz/notes
+module github.com/fynelabs/notes
 
 go 1.15
 
