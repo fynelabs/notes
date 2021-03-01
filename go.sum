@@ -1,7 +1,5 @@
-fyne.io/fyne/v2 v2.0.0 h1:TfsS3bNq5663BpXsoz1OfzyjcaMqqOf9usI8ZKkw4IE=
-fyne.io/fyne/v2 v2.0.0/go.mod h1:FmobqvPpBW+nG1nDyxZWf1SQLED9g/vXIxiIIVjHazY=
-fyne.io/fyne/v2 v2.0.1-0.20210225094255-556e8249b746 h1:Q4+ns+ywj7V8Vo1TojLPHC3jkV+ZuC0D9ERDx8zuDtw=
-fyne.io/fyne/v2 v2.0.1-0.20210225094255-556e8249b746/go.mod h1:Q12wKzvdrCct+tkaJcMuTmcyDz4ZDjc6+/llerrFnFc=
+fyne.io/fyne/v2 v2.0.1-0.20210301102229-23e9da87e794 h1:mw8bC9bxAqaKeTX18ecxoN/95ND0vnKRBM+BNpRymzI=
+fyne.io/fyne/v2 v2.0.1-0.20210301102229-23e9da87e794/go.mod h1:Q12wKzvdrCct+tkaJcMuTmcyDz4ZDjc6+/llerrFnFc=
 github.com/Kodeworks/golang-image-ico v0.0.0-20141118225523-73f0f4cfade9/go.mod h1:7uhhqiBaR4CpN0k9rMjOtjpcfGd6DG2m04zQxKnWQ0I=
 github.com/akavel/rsrc v0.8.0/go.mod h1:uLoCtb9J+EyAqh+26kdrTgmzRBFPGOolLWKpdxkKq+c=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
