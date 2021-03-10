@@ -34,6 +34,7 @@ func (u *ui) setNote(n *note) {
 	}
 	u.current = n
 	u.content.Bind(n.content)
+	u.content.Validator = nil
 	u.list.Refresh()
 }
 
