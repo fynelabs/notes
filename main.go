@@ -114,7 +114,7 @@ func (u *ui) placeholderContent() string {
 		if runtime.GOOS == "darwin" {
 			modifier = "cmd"
 		}
-		text += fmt.Sprintf("\n\nOr use they keyboard shortcut %s+N.", modifier)
+		text += fmt.Sprintf("\n\nOr use the keyboard shortcut %s+N.", modifier)
 	}
 	return text
 }
@@ -131,6 +131,6 @@ func main() {
 	w.SetContent(notesUI.loadUI())
 	notesUI.registerKeys(w)
 
-	w.Resize(fyne.NewSize(400, 320))
+	w.Resize(fyne.NewSize(500, 320))
 	w.ShowAndRun()
 }
