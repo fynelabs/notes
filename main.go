@@ -122,7 +122,7 @@ func (u *ui) placeholderContent() string {
 func main() {
 	a := app.NewWithID("com.fynelabs.notes")
 	a.Settings().SetTheme(&myTheme{})
-	w := a.NewWindow("Notes")
+	w := a.NewWindow("Fyne Notes")
 
 	list := &notelist{pref: a.Preferences()}
 	list.load()
