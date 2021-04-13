@@ -14,9 +14,9 @@ func testGUI() *ui {
 	str1 := "1"
 	str2 := "2"
 	l := &notelist{pref: test.NewApp().Preferences(),
-		notes: []*note{
-			{content: binding.BindString(&str1)},
-			{content: binding.BindString(&str2)},
+		all: []*note{
+			{content: binding.BindString(&str1), deleted: binding.NewBool()},
+			{content: binding.BindString(&str2), deleted: binding.NewBool()},
 		}}
 
 	gui := &ui{notes: l}

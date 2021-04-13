@@ -41,19 +41,19 @@ func (u *ui) setNote(n *note) {
 func (u *ui) buildList() *widget.List {
 	l := widget.NewList(
 		func() int {
-			return len(u.notes.notes)
+			return len(u.notes.notes())
 		},
 		func() fyne.CanvasObject {
 			return widget.NewLabel("Title")
 		},
 		func(id widget.ListItemID, obj fyne.CanvasObject) {
 			l := obj.(*widget.Label)
-			n := u.notes.notes[id]
+			n := u.notes.notes()[id]
 			l.Bind(n.title())
 		})
 
 	l.OnSelected = func(id widget.ListItemID) {
-		n := u.notes.notes[id]
+		n := u.notes.notes()[id]
 		u.setNote(n)
 	}
 
@@ -61,9 +61,10 @@ func (u *ui) buildList() *widget.List {
 }
 
 func (u *ui) removeCurrentNote() {
-	u.notes.remove(u.current)
-	if len(u.notes.notes) > 0 {
-		u.setNote(u.notes.notes[0])
+	u.notes.delete(u.current)
+	visible := u.notes.notes()
+	if len(visible) > 0 {
+		u.setNote(visible[0])
 	} else {
 		u.setNote(nil)
 	}
@@ -76,8 +77,9 @@ func (u *ui) loadUI() fyne.CanvasObject {
 
 	u.list = u.buildList()
 
-	if len(u.notes.notes) > 0 {
-		u.setNote(u.notes.notes[0])
+	visible := u.notes.notes()
+	if len(visible) > 0 {
+		u.setNote(visible[0])
 		u.list.Select(0)
 	}
 

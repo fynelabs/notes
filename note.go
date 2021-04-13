@@ -10,12 +10,14 @@ import (
 )
 
 const (
-	countKey = "notecount"
-	noteKey  = "note%d"
+	countKey       = "notecount"
+	noteKey        = "note%d"
+	noteDeletedKey = "note%ddeleted"
 )
 
 type note struct {
 	content binding.String
+	deleted binding.Bool
 }
 
 func (n *note) title() binding.String {
@@ -23,40 +25,28 @@ func (n *note) title() binding.String {
 }
 
 type notelist struct {
-	notes []*note
-	pref  fyne.Preferences
+	all  []*note
+	pref fyne.Preferences
 }
 
 func (l *notelist) add() *note {
-	key := fmt.Sprintf(noteKey, len(l.notes))
-	n := &note{binding.BindPreferenceString(key, l.pref)}
-	l.notes = append([]*note{n}, l.notes...)
+	key := fmt.Sprintf(noteKey, len(l.all))
+	deleteKey := fmt.Sprintf(noteDeletedKey, len(l.all))
+	n := &note{
+		binding.BindPreferenceString(key, l.pref),
+		binding.BindPreferenceBool(deleteKey, l.pref),
+	}
+	l.all = append([]*note{n}, l.all...)
 	l.save()
 	return n
 }
 
-func (l *notelist) remove(n *note) {
-	defer l.save()
-	if len(l.notes) == 0 {
-		return
-	}
-
-	for i, note := range l.notes {
-		if note != n {
-			continue
-		}
-
-		if i == len(l.notes)-1 {
-			l.notes = l.notes[:i]
-		} else {
-			l.notes = append(l.notes[:i], l.notes[i+1:]...)
-		}
-		break
-	}
+func (l *notelist) delete(n *note) {
+	n.deleted.Set(true)
 }
 
 func (l *notelist) load() {
-	l.notes = nil
+	l.all = nil
 	count := l.pref.Int(countKey)
 	if count == 0 {
 		return
@@ -64,13 +54,26 @@ func (l *notelist) load() {
 
 	for i := count - 1; i >= 0; i-- {
 		key := fmt.Sprintf(noteKey, i)
+		deleteKey := fmt.Sprintf(noteDeletedKey, i)
 		content := binding.BindPreferenceString(key, l.pref)
-		l.notes = append(l.notes, &note{content})
+		deleted := binding.BindPreferenceBool(deleteKey, l.pref)
+		l.all = append(l.all, &note{content, deleted})
 	}
 }
 
+func (l *notelist) notes() []*note {
+	var visible []*note
+	for _, n := range l.all {
+		if del, _ := n.deleted.Get(); del {
+			continue
+		}
+		visible = append(visible, n)
+	}
+	return visible
+}
+
 func (l *notelist) save() {
-	l.pref.SetInt(countKey, len(l.notes))
+	l.pref.SetInt(countKey, len(l.all))
 }
 
 type titleString struct {
