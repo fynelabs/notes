@@ -1,4 +1,5 @@
 //go:generate fyne bundle -o bundled.go GochiHand.ttf
+//go:generate fyne bundle -append -o bundled.go Icon.png
 
 package main
 

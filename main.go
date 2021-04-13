@@ -123,6 +123,7 @@ func (u *ui) placeholderContent() string {
 
 func main() {
 	a := app.NewWithID("com.fynelabs.notes")
+	a.SetIcon(resourceIconPng)
 	a.Settings().SetTheme(&myTheme{})
 	w := a.NewWindow("Fyne Notes")
 
