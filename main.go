@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime"
 
+	"fyne.io/cloud"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -123,9 +124,16 @@ func (u *ui) placeholderContent() string {
 
 func main() {
 	a := app.NewWithID("com.fynelabs.notes")
+	cloud.Enable(a)
 	a.SetIcon(resourceIconPng)
 	a.Settings().SetTheme(&myTheme{})
 	w := a.NewWindow("Fyne Notes")
+
+	w.SetMainMenu(fyne.NewMainMenu(
+		fyne.NewMenu("File",
+			fyne.NewMenuItem("Sync...", func() {
+				cloud.ShowSettings(a, w)
+			}))))
 
 	list := &notelist{pref: a.Preferences()}
 	list.load()
