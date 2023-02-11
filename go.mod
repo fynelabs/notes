@@ -3,7 +3,7 @@ module github.com/fynelabs/notes
 go 1.15
 
 require (
-	fyne.io/cloud v0.0.0-20220623211051-c87517a0a3cd
-	fyne.io/fyne/v2 v2.2.1-0.20220623210436-5874a2e7c869
-	github.com/stretchr/testify v1.7.2
+	fyne.io/cloud v0.0.0-20220901085759-491f84a7c666
+	fyne.io/fyne/v2 v2.3.1-rc2
+	github.com/stretchr/testify v1.8.0
 )
