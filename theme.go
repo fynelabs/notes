@@ -16,7 +16,7 @@ type myTheme struct {
 func (m *myTheme) Color(n fyne.ThemeColorName, v fyne.ThemeVariant) color.Color {
 	switch n {
 	case theme.ColorNameBackground, theme.ColorNameInputBackground,
-	theme.ColorNameOverlayBackground, theme.ColorNameMenuBackground:
+		theme.ColorNameOverlayBackground, theme.ColorNameMenuBackground:
 		if v == theme.VariantLight {
 			return &color.NRGBA{R: 0xF0, G: 0xE9, B: 0x9B, A: 0xFF}
 		}
@@ -28,7 +28,7 @@ func (m *myTheme) Color(n fyne.ThemeColorName, v fyne.ThemeVariant) color.Color 
 		return &color.NRGBA{R: 0xF0, G: 0xE9, B: 0x9B, A: 0xFF}
 	case theme.ColorNamePrimary:
 		return &color.NRGBA{R: 0xff, G: 0xff, B: 0xff, A: 0xAA}
-	case theme.ColorNameButton, theme.ColorNameFocus:
+	case theme.ColorNameButton, theme.ColorNameFocus, theme.ColorNameSelection:
 		return &color.NRGBA{R: 0xff, G: 0xff, B: 0xff, A: 0x66}
 	}
 
