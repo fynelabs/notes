@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"runtime"
+	"time"
 
 	"fyne.io/cloud"
 	"fyne.io/fyne/v2"
@@ -75,7 +76,7 @@ func (u *ui) removeCurrentNote() {
 func (u *ui) loadUI() fyne.CanvasObject {
 	u.content = widget.NewMultiLineEntry()
 	u.content.SetText(u.placeholderContent())
-
+	time.Sleep(time.Millisecond * 100) // de-bounce Entry? #4235
 	u.list = u.buildList()
 
 	visible := u.notes.notes()
