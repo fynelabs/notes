@@ -93,6 +93,10 @@ func (u *ui) loadUI() fyne.CanvasObject {
 			u.removeCurrentNote()
 		}),
 	)
+	if fyne.CurrentDevice().IsMobile() {
+		// a mock button to leave space for the mobile menu
+		bar.Items = append([]widget.ToolbarItem{widget.NewToolbarAction(theme.MenuIcon(), func() {})}, bar.Items...)
+	}
 
 	side := fyne.NewContainerWithLayout(layout.NewBorderLayout(bar, nil, nil, nil),
 		bar, container.NewVScroll(u.list))

@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	fyne.io/cloud v0.0.0-20230911143224-fc981eeacb77
-	fyne.io/fyne/v2 v2.4.0
+	fyne.io/fyne/v2 v2.4.1-0.20230913135715-307f9285c693
 	github.com/stretchr/testify v1.8.4
 )
 
