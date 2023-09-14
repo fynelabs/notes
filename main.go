@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"runtime"
+	"time"
 
 	"fyne.io/cloud"
 	"fyne.io/fyne/v2"
@@ -75,7 +76,7 @@ func (u *ui) removeCurrentNote() {
 func (u *ui) loadUI() fyne.CanvasObject {
 	u.content = widget.NewMultiLineEntry()
 	u.content.SetText(u.placeholderContent())
-
+	time.Sleep(time.Millisecond * 100) // de-bounce Entry? #4235
 	u.list = u.buildList()
 
 	visible := u.notes.notes()
@@ -92,6 +93,10 @@ func (u *ui) loadUI() fyne.CanvasObject {
 			u.removeCurrentNote()
 		}),
 	)
+	if fyne.CurrentDevice().IsMobile() {
+		// a mock button to leave space for the mobile menu
+		bar.Items = append([]widget.ToolbarItem{widget.NewToolbarAction(theme.MenuIcon(), func() {})}, bar.Items...)
+	}
 
 	side := fyne.NewContainerWithLayout(layout.NewBorderLayout(bar, nil, nil, nil),
 		bar, container.NewVScroll(u.list))
